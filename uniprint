@@ -1,0 +1,82 @@
+#!/usr/bin/env bash
+
+function show_help {
+echo -e "Usage:\t$0 [-U user] [-H host] [-P printer] [-\# count] [-N pages_on_paper] [-O orientation] [-K duplex] File"
+echo -e "\t$0 -h"
+echo ""
+echo "Prints File on printer printer as user user logging in on host host"
+}
+
+if [ -f ~/.uniprintrc ]; then
+	source ~/.uniprintrc
+fi
+
+while getopts "U:P:H:#:N:K:O:h" opt; do
+	case $opt in
+		O)
+			ORIENTATION=$OPTARG
+			;;
+		U)
+			UNIUSER=$OPTARG
+			;;
+		P)
+			UNIPRINTER=$OPTARG
+			;;
+		H)
+			UNIHOST=$OPTARG
+			;;
+		\#)
+			COUNT=$OPTARG
+			;;
+		N)
+			PAGES=$OPTARG
+			;;
+		K)
+			DUPLEX=$OPTARG
+			;;
+		h)
+			show_help
+			exit 1
+			;;
+	esac
+done
+
+shift $((OPTIND-1))
+if [ -z "$UNIUSER" ]; then
+	read -p "Username: " UNIUSER
+fi
+
+if [ -z "$UNIHOST" ]; then
+	read -p "Host: " UNIHOST
+fi
+
+if [ -z "$UNIPRINTER" ]; then
+	read -p "Printer: " UNIPRINTER
+fi
+
+if [ -z "$ORIENTATION" ]; then
+	ORIENTATION=portrait
+fi
+
+if [ -z "$DUPLEX" ]; then
+	DUPLEX=simplex
+fi
+
+if [ -z "$PAGES" ]; then
+	PAGES=0
+fi
+
+if [ -z "$COUNT" ]; then
+	COUNT=1
+fi
+
+ADDITIONALOPTIONS="-N$PAGES -#$COUNT -K$DUPLEX -O$ORIENTATION"
+
+FILES=$@
+if [ -z "$FILE" ]; then
+	read -p "File: " FILE
+fi
+
+echo "Printing $FILE on $UNIPRINTER as $UNIUSER@$UNIHOST"
+
+echo ssh $UNIUSER@$UNIHOST "lpr -P $UNIPRINTER $UNIOPTIONS $ADDITIONALOPTIONS"

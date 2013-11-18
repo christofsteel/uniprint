@@ -1,0 +1,8 @@
+UNIUSER="muster00"
+UNIHOST="uran.cs.uni-dortmund.de"
+UNIPRINTER="ohs14pr1"
+#DUPLEX=simplex # simplex (Default), duplex, tumble
+#COUNT=1
+#PAGES=0 #Pages on paper
+#ORIENTATION=portrait # portrait (Default), landscape
+UNIOPTIONS="-Fa4w -ALayout=lrtb"
