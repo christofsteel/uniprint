@@ -16,7 +16,7 @@ then deploy it,
 lastly copy the configfile to your home directory. Remember to add edit it according to your needs.
 
     cp uniprintrc.sample ${HOME}/.uniprintrc
-    vim ${HOME}/uniprintrc
+    vim ${HOME}/.uniprintrc
 
 # Usage
 
