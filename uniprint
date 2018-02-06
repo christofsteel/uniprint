@@ -1,14 +1,14 @@
 #!/usr/bin/env bash
-#-opage-ranges=1,3-4,6
 
 function show_help {
-echo -e "Usage:\t$0 [-U user] [-H host] [-P printer] [-\# count] [-N pages_on_paper] [-O orientation] [-K duplex] [-S range_to_Print(usage 1,3-5,10)] File"
+echo -e "Usage:\t$0 [-U user] [-H host] [-P printer] [-\# count] [-N pages_on_paper] [-O orientation] [-K duplex] [-r range] File"
 echo -e "\t$0 -h for help"
 echo -e "\t$0 -d for debug"
 echo ""
 echo "Prints File on printer as logging in on host"
 }
 
+RANGE="1-"
 
 if [ -f ~/.config/uniprint/uniprint.conf ]; then
 	source ~/.config/uniprint/uniprint.conf
@@ -48,7 +48,7 @@ while getopts "h:U:P:H:#:N:K:O:S:d" opt; do
 			DUPLEX=$OPTARG
 			;;
 		S)
-			PRINTPAGES=$OPTARG
+			RANGE=$OPTARG
 			;;
 		h)
 			show_help
@@ -102,8 +102,14 @@ if [ -z "$PAGES" ]; then
 	exit 1
 fi
 
+if [ -z "$RANGE" ]; then
+	echo "no range provided"
+	show_help
+	exit 1
+fi
+
 if [ -z "$COUNT" ]; then
-	echo "no print-range provided"
+	echo "no count provided"
 	show_help
 	exit 1
 fi
@@ -112,7 +118,7 @@ if [ ! -z "$@" ]; then
 	FILE=$@
 fi
 
-ADDITIONALOPTIONS="-N$PAGES -#$COUNT -K$DUPLEX -O$ORIENTATION -opage-ranges=$PRINTPAGES"
+ADDITIONALOPTIONS="-N$PAGES -#$COUNT -K$DUPLEX -O$ORIENTATION -opage-ranges=$RANGE"
 
 echo "Printing $FILE on $UNIPRINTER as $UNIUSER@$UNIHOST"
 if [ ! -z "$DEBUG" ]; then
