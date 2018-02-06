@@ -1,6 +1,6 @@
 # uniprint
 
-A shell script to print on the printers on IRB printers of the TU Dortmund
+A shell script to print on the IRB printers of the TU Dortmund
 
 # Installation
 
