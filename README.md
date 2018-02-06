@@ -13,7 +13,7 @@ then deploy it,
 
     cp uniprint ${HOME}/.local/bin/
 
-lastly copy the configfile to your home directory. 
+lastly copy the configfile to your home directory. Remember to add edit it according to your needs.
 
     cp uniprintrc.sample ${HOME}/.uniprintrc
     vim ${HOME}/uniprintrc
