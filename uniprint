@@ -11,7 +11,7 @@ if [ -f ~/.uniprintrc ]; then
 	source ~/.uniprintrc
 fi
 
-while getopts "U:P:H:#:N:K:O:h:r" opt; do
+while getopts "U:P:H:#:N:K:O:r:h" opt; do
 	case $opt in
 		O)
 			ORIENTATION=$OPTARG
@@ -77,7 +77,7 @@ if [ -z "$COUNT" ]; then
 	COUNT=1
 fi
 
-ADDITIONALOPTIONS="-N$PAGES -#$COUNT -K$DUPLEX -O$ORIENTATION"
+ADDITIONALOPTIONS="-N$PAGES -#$COUNT -K$DUPLEX -O$ORIENTATION -opage-ranges=$RANGE"
 
 FILE=$@
 if [ -z "$FILE" ]; then
@@ -86,4 +86,4 @@ fi
 
 echo "Printing $FILE on $UNIPRINTER as $UNIUSER@$UNIHOST"
 
-ssh $UNIUSER@$UNIHOST "lpr -P $UNIPRINTER $UNIOPTIONS $ADDITIONALOPTIONS" < $FILE
+ssh $UNIUSER@$UNIHOST "lpr -P $UNIPRINTER $UNIOPTIONS $ADDITIONALOPTIONS" < "$FILE"
