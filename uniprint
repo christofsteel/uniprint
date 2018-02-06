@@ -24,7 +24,7 @@ else
 	exit 1
 fi
 
-while getopts "h:U:P:H:#:N:K:O:S:d" opt; do
+while getopts "h:U:P:H:#:N:K:O:r:d" opt; do
 	case $opt in
 		O)
 			ORIENTATION=$OPTARG
@@ -47,7 +47,7 @@ while getopts "h:U:P:H:#:N:K:O:S:d" opt; do
 		K)
 			DUPLEX=$OPTARG
 			;;
-		S)
+		r)
 			RANGE=$OPTARG
 			;;
 		h)
