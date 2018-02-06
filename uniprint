@@ -1,17 +1,30 @@
 #!/usr/bin/env bash
+#-opage-ranges=1,3-4,6
 
 function show_help {
-echo -e "Usage:\t$0 [-U user] [-H host] [-P printer] [-\# count] [-N pages_on_paper] [-O orientation] [-K duplex] File"
-echo -e "\t$0 -h"
+echo -e "Usage:\t$0 [-U user] [-H host] [-P printer] [-\# count] [-N pages_on_paper] [-O orientation] [-K duplex] [-S pagenumbers_to_Print(usage 1,3-5,10)] File"
+echo -e "\t$0 -h for help"
+echo -e "\t$0 -d for debug"
 echo ""
-echo "Prints File on printer printer as user user logging in on host host"
+echo "Prints File on printer as logging in on host"
 }
 
-if [ -f ~/.uniprintrc ]; then
-	source ~/.uniprintrc
+
+if [ -f ~/.config/uniprint/uniprint.conf ]; then
+	source ~/.config/uniprint/uniprint.conf
+elif [ -f /usr/etc/uniprint.conf ]; then
+	source /usr/etc/uniprint.conf
+elif [ -f /usr/local/etc/uniprint.conf ]; then
+	source /usr/local/etc/uniprint.conf
+else
+	echo -e "no config found. create one in one of these directorys: "
+	echo -e "\t ~/.config/uniprint/uniprint.conf"
+	echo -e "\t /usr/local/etc/uniprint.conf"
+	show_help
+	exit 1
 fi
 
-while getopts "U:P:H:#:N:K:O:h" opt; do
+while getopts "h:U:P:H:#:N:K:O:S:d" opt; do
 	case $opt in
 		O)
 			ORIENTATION=$OPTARG
@@ -34,7 +47,18 @@ while getopts "U:P:H:#:N:K:O:h" opt; do
 		K)
 			DUPLEX=$OPTARG
 			;;
+		S)
+			PRINTPAGES=$OPTARG
+			;;
 		h)
+			show_help
+			exit 1
+			;;
+		d)
+			DEBUG=1
+			;;
+		*)
+			echo "unkown switch $OPTARG"
 			show_help
 			exit 1
 			;;
@@ -43,40 +67,56 @@ done
 
 shift $((OPTIND-1))
 if [ -z "$UNIUSER" ]; then
-	read -p "Username: " UNIUSER
+	echo "no username provided"
+	show_help
+	exit 1
 fi
 
 if [ -z "$UNIHOST" ]; then
-	read -p "Host: " UNIHOST
+	echo "no host provided"
+	show_help
+	exit 1
 fi
 
 if [ -z "$UNIPRINTER" ]; then
-	read -p "Printer: " UNIPRINTER
+	echo "no printer name provided"
+	show_help
+	exit 1
 fi
 
 if [ -z "$ORIENTATION" ]; then
-	ORIENTATION=portrait
+	echo "no orientation provided"
+	show_help
+	exit 1
 fi
 
 if [ -z "$DUPLEX" ]; then
-	DUPLEX=simplex
+	echo "no duplex provided"
+	show_help
+	exit 1
 fi
 
 if [ -z "$PAGES" ]; then
-	PAGES=0
+	echo "no page per paper count provided"
+	show_help
+	exit 1
 fi
 
 if [ -z "$COUNT" ]; then
-	COUNT=1
+	echo "no count provided"
+	show_help
+	exit 1
 fi
 
-ADDITIONALOPTIONS="-N$PAGES -#$COUNT -K$DUPLEX -O$ORIENTATION"
-
-FILE=$@
-if [ -z "$FILE" ]; then
-	read -p "File: " FILE
+if [ ! -z "$@" ]; then
+	FILE=$@
 fi
+
+ADDITIONALOPTIONS="-N$PAGES -#$COUNT -K$DUPLEX -O$ORIENTATION -opage-ranges=$PRINTPAGES"
 
 echo "Printing $FILE on $UNIPRINTER as $UNIUSER@$UNIHOST"
+if [ ! -z "$DEBUG" ]; then
+	echo executing ssh $UNIUSER@$UNIHOST "lpr -P $UNIPRINTER $UNIOPTIONS $ADDITIONALOPTIONS"
+fi
 
-ssh $UNIUSER@$UNIHOST "lpr -P $UNIPRINTER $UNIOPTIONS $ADDITIONALOPTIONS" < $FILE
+sshpass -p $UNIPASS ssh $UNIUSER@$UNIHOST "lpr -P $UNIPRINTER $UNIOPTIONS $ADDITIONALOPTIONS" < "$FILE"
