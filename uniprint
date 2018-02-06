@@ -2,7 +2,7 @@
 #-opage-ranges=1,3-4,6
 
 function show_help {
-echo -e "Usage:\t$0 [-U user] [-H host] [-P printer] [-\# count] [-N pages_on_paper] [-O orientation] [-K duplex] [-S pagenumbers_to_Print(usage 1,3-5,10)] File"
+echo -e "Usage:\t$0 [-U user] [-H host] [-P printer] [-\# count] [-N pages_on_paper] [-O orientation] [-K duplex] [-S range_to_Print(usage 1,3-5,10)] File"
 echo -e "\t$0 -h for help"
 echo -e "\t$0 -d for debug"
 echo ""
@@ -103,7 +103,7 @@ if [ -z "$PAGES" ]; then
 fi
 
 if [ -z "$COUNT" ]; then
-	echo "no count provided"
+	echo "no print-range provided"
 	show_help
 	exit 1
 fi
