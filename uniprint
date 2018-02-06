@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 function show_help {
-echo -e "Usage:\t$0 [-U user] [-H host] [-P printer] [-\# count] [-N pages_on_paper] [-O orientation] [-K duplex] File"
+echo -e "Usage:\t$0 [-U user] [-H host] [-P printer] [-\# count] [-N pages_on_paper] [-O orientation] [-K duplex] [-r range] File"
 echo -e "\t$0 -h"
 echo ""
 echo "Prints File on printer printer as user user logging in on host host"
@@ -11,7 +11,7 @@ if [ -f ~/.uniprintrc ]; then
 	source ~/.uniprintrc
 fi
 
-while getopts "U:P:H:#:N:K:O:h" opt; do
+while getopts "U:P:H:#:N:K:O:r:h" opt; do
 	case $opt in
 		O)
 			ORIENTATION=$OPTARG
@@ -30,6 +30,9 @@ while getopts "U:P:H:#:N:K:O:h" opt; do
 			;;
 		N)
 			PAGES=$OPTARG
+			;;
+		r)
+			RANGE=$OPTARG
 			;;
 		K)
 			DUPLEX=$OPTARG
@@ -66,11 +69,15 @@ if [ -z "$PAGES" ]; then
 	PAGES=0
 fi
 
+if [ -z "$RANGE" ]; then
+	RANGE="1-"
+fi
+
 if [ -z "$COUNT" ]; then
 	COUNT=1
 fi
 
-ADDITIONALOPTIONS="-N$PAGES -#$COUNT -K$DUPLEX -O$ORIENTATION"
+ADDITIONALOPTIONS="-N$PAGES -#$COUNT -K$DUPLEX -O$ORIENTATION -opage-ranges=$RANGE"
 
 FILE=$@
 if [ -z "$FILE" ]; then
@@ -79,4 +86,4 @@ fi
 
 echo "Printing $FILE on $UNIPRINTER as $UNIUSER@$UNIHOST"
 
-ssh $UNIUSER@$UNIHOST "lpr -P $UNIPRINTER $UNIOPTIONS $ADDITIONALOPTIONS" < $FILE
+ssh $UNIUSER@$UNIHOST "lpr -P $UNIPRINTER $UNIOPTIONS $ADDITIONALOPTIONS" < "$FILE"
