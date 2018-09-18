@@ -1,5 +1,6 @@
 UNIUSER="muster00"
 UNIHOST="plutonium.cs.uni-dortmund.de"
+#UNIHOST2="fiws123.cs.uni-dortmund.de"
 UNIPRINTER="ohs14pr1"
 #DUPLEX=simplex # simplex (Default), duplex, tumble
 #COUNT=1
