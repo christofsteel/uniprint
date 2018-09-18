@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 function show_help {
-echo -e "Usage:\t$0 [-U user] [-H host] [-P printer] [-\# count] [-N pages_on_paper] [-O orientation] [-K duplex] [-r range] File"
+echo -e "Usage:\t$0 [-U user] [-H host] [-2 host2] [-P printer] [-\# count] [-N pages_on_paper] [-O orientation] [-K duplex] [-r range] File"
 echo -e "\t$0 -h"
 echo ""
 echo "Prints File on printer printer as user user logging in on host host"
@@ -11,7 +11,7 @@ if [ -f ~/.uniprintrc ]; then
 	source ~/.uniprintrc
 fi
 
-while getopts "U:P:H:#:N:K:O:r:h" opt; do
+while getopts "U:P:H:2:#:N:K:O:r:h" opt; do
 	case $opt in
 		O)
 			ORIENTATION=$OPTARG
@@ -21,6 +21,9 @@ while getopts "U:P:H:#:N:K:O:r:h" opt; do
 			;;
 		P)
 			UNIPRINTER=$OPTARG
+			;;
+		2)
+			UNIHOST2=$OPTARG
 			;;
 		H)
 			UNIHOST=$OPTARG
@@ -51,6 +54,10 @@ fi
 
 if [ -z "$UNIHOST" ]; then
 	read -p "Host: " UNIHOST
+fi
+
+if [ -z "$UNIHOST2" ]; then
+    UNIHOST2="$UNIHOST"
 fi
 
 if [ -z "$UNIPRINTER" ]; then
@@ -86,4 +93,5 @@ fi
 
 echo "Printing $FILE on $UNIPRINTER as $UNIUSER@$UNIHOST"
 
-ssh $UNIUSER@$UNIHOST "lpr -P $UNIPRINTER $UNIOPTIONS $ADDITIONALOPTIONS" < "$FILE"
+set -x
+ssh -J "$UNIUSER@$UNIHOST" $UNIUSER@$UNIHOST2 "lpr -P $UNIPRINTER $UNIOPTIONS $ADDITIONALOPTIONS" < "$FILE"
