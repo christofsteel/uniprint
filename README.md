@@ -13,12 +13,12 @@ then deploy it,
 
     cp uniprint ${HOME}/.local/bin/
 
-lastly copy the configfile to your home directory. Remember to add edit it according to your needs.
+lastly copy the configfile to your home directory. Remember to edit it according to your needs.
 
     cp uniprintrc.sample ${HOME}/.uniprintrc
     vim ${HOME}/.uniprintrc
 
 # Usage
 
-    uniprint [-U user] [-H host] [-P printer] [-\# count] [-N pages_on_paper] [-O orientation] [-K duplex] [-r range] File
+    uniprint [-U user] [-H host] [-2 host2] [-P printer] [-\# count] [-N pages_on_paper] [-O orientation] [-K duplex] [-r range] File
     uniprint -h
